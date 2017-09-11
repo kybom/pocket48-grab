@@ -75,8 +75,10 @@ form {
 <!-- 表头 end -->
 <?php
 //测试用
+/*
 ini_set('display_errors',1);            //错误信息  
 ini_set('display_startup_errors',1);    //php启动错误信息
+*/
 require_once ('post.php');
 if(isset($_POST["time0"])&&isset($_POST["y"])&&isset($_POST["m"])&&isset($_POST["d"])&&isset($_POST["h"])&&isset($_POST["i"])&&isset($_POST["s"])&&isset($_POST["limit"])&&isset($_POST["g"])&&isset($_POST["t"])&&isset($_POST["me"]))
 {
