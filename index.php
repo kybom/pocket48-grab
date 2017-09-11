@@ -33,7 +33,7 @@ form {
 <div align="center">
 <div id="header">
 <h1>口袋48直播&录播web地址&视频源获取 v0.1 alpha</h1>
-<p>作者：@小赛艇 联系：xsaiting@qq.com Github地址：</p>
+<p>作者：@小赛艇 联系：xsaiting@qq.com Github地址：<a href="https://github.com/czy0409/pocket48-grab/" target="_blank">pocket48-grab</a></p>
 <p>说明：1、此版本为alpha测试版本，仅实现了相关功能，希望能抛砖引玉，有更多的人一起完善它</p>
 <p>2、直播源推荐使用<a href="http://www.videolan.org/" target="_blank">VLC media player</a>播放，该播放器可播放m3u8文件</p>
 <form method="post" action="<?php print $_SERVER["PHP_SELF"]?>">
