@@ -108,7 +108,7 @@ live_print($get);
 } else {
 	echo "<td colspan='11'>暂未提交参数或参数错误，自动显示距当前100条直播</td>";
 //发送请求
-$get=live_get(0);
+$get=live_get(100);
 //打印表格
 live_print($get);
 }
