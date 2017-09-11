@@ -37,17 +37,21 @@ return $result;
 //将直播、录播数据打印成表格
 function live_print ($result) {
 	$data=json_decode($result,true);
+	if(!empty($data["content"]["liveList"])){
 	echo '<tr><td colspan="11"><span style="color:Red">----------分界线，以下为直播----------</span></td></tr>';
-	foreach ($data["content"]["liveList"] as $id => $content) {
+		foreach ($data["content"]["liveList"] as $id => $content) {
 		echo '<tr>';
 		tablelist($content);
 		echo '</tr>';
 	}
+	}
+	if(!empty($data["content"]["reviewList"])){
 	echo '<tr><td colspan="11"><span style="color:Red">----------录播分界线，以下为录播----------</span></td></tr>';
 	foreach ($data["content"]["reviewList"] as $id => $content) {
 		echo '<tr>';
 		tablelist($content);
 		echo '</tr>';
+	}
 	}
 }
 //辅助函数 将直播、录播数据提取的内容打印成一列
