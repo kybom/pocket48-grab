@@ -7,7 +7,7 @@ define("LIVE_API", "https://plive.48.cn/livesystem/api/live/v1/memberLivePage");
 //直播分享地址前缀
 define("LIVE_SHARE", "https://h5.48.cn/2017appshare/memberLiveShare/index.html?id=");
 
-//图片服务器
+//图片、弹幕服务器
 define("LIVE_PIC", "https://source.48.cn");
 
 
@@ -37,13 +37,13 @@ return $result;
 //将直播、录播数据打印成表格
 function live_print ($result) {
 	$data=json_decode($result,true);
-	echo '<td colspan="11"><span style="color:Red">----------分界线，以下为直播----------</span></td>';
+	echo '<tr><td colspan="11"><span style="color:Red">----------分界线，以下为直播----------</span></td></tr>';
 	foreach ($data["content"]["liveList"] as $id => $content) {
 		echo '<tr>';
 		tablelist($content);
 		echo '</tr>';
 	}
-	echo '<td colspan="11"><span style="color:Red">----------录播分界线，以下为录播----------</span></td>';
+	echo '<tr><td colspan="11"><span style="color:Red">----------录播分界线，以下为录播----------</span></td></tr>';
 	foreach ($data["content"]["reviewList"] as $id => $content) {
 		echo '<tr>';
 		tablelist($content);
