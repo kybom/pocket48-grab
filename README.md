@@ -1,6 +1,9 @@
 # pocket48-grab
 口袋48直播&amp;录播web地址&amp;视频源获取
 
+# 测试地址
+https://xsaiting.com/pocket48/index.php
+
 # 说明
 1、此版本目前为alpha测试版本，仅实现了相关功能，希望能抛砖引玉，有更多的人一起完善它
 
@@ -11,7 +14,3 @@
 时间稍久的录播才有lrc弹幕，可以将其转换为标准字幕文件配合播放器使用。
 
 获取实时弹幕的api写在issues里面，要使用的话得开发播放器？暂时搁一边了。
-
-
-# 测试地址
-https://xsaiting.com/pocket48/index.php
