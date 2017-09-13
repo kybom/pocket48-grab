@@ -1,129 +1,72 @@
 <?php
-//定义常量
+//预处理数据、发送请求并返回数据
 
-//api地址
-define("LIVE_API", "https://plive.48.cn/livesystem/api/live/v1/memberLivePage");
+//测试用
 
-//直播分享地址前缀
-define("LIVE_SHARE", "https://h5.48.cn/2017appshare/memberLiveShare/index.html?id=");
-
-//图片、弹幕服务器
-define("LIVE_PIC", "https://source.48.cn");
+ini_set('display_errors',1);            //错误信息  
+ini_set('display_startup_errors',1);    //php启动错误信息
 
 
-//获取直播、录播json数据
-function live_get ($limit='100',$lasttime='0',$groupId='0',$type='0',$memberId='0',$api=LIVE_API)
+require_once ('functions.php');
+function empty_0 ($i) {
+	if ($i=="") {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+if(!(empty_0($_POST["time0"])||empty_0($_POST["y"])||empty_0($_POST["m"])||empty_0($_POST["d"])||empty_0($_POST["h"])||empty_0($_POST["i"])||empty_0($_POST["s"])||empty_0($_POST["limit"])||empty_0($_POST["g"])||empty_0($_POST["t"])||empty_0($_POST["me"])))
+//检查变量是否非空
 {
-$data = array(
-	"lastTime" => $lasttime,
-	"groupId" => $groupId,
-	"type" => $type,
-	"memberId" => $memberId,
-	"giftUpdTime" => '1498211389003',
-	"limit" => $limit
-	);                              
-$data_string = json_encode($data);
-$ch = curl_init($api);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(          
-    'Content-Type: application/json',
-    'Content-Length: ' . strlen($data_string)) 
-);
-$result = curl_exec($ch);
-return $result;
-}
-//将直播、录播数据打印成表格
-function live_print ($result) {
-	$data=json_decode($result,true);
-	if(!empty($data["content"]["liveList"])){
-	echo '<tr><td colspan="11"><span style="color:Red">----------分界线，以下为直播----------</span></td></tr>';
-		foreach ($data["content"]["liveList"] as $id => $content) {
-		echo '<tr>';
-		tablelist($content);
-		echo '</tr>';
-	}
-	}
-	if(!empty($data["content"]["reviewList"])){
-	echo '<tr><td colspan="11"><span style="color:Red">----------录播分界线，以下为录播----------</span></td></tr>';
-	foreach ($data["content"]["reviewList"] as $id => $content) {
-		echo '<tr>';
-		tablelist($content);
-		echo '</tr>';
-	}
-	}
-}
-//辅助函数 将直播、录播数据提取的内容打印成一列
-function tablelist($content) {
-	foreach ($content as $key => $value) {
-		switch ($key) {
-			case "liveId": //官方地址
-				echo '<td class="t1"><a href="'.LIVE_SHARE.$value.'"  target="_blank">'.LIVE_SHARE.$value.'</a></td>';
-				break;
-			case "title": //标题
-				echo '<td class="t2">'.$value.'</td>';
-				break;
-			case "subTitle": //副标题
-				echo '<td class="t3">'.$value.'</td>';
-				break;
-			case "picPath": //配图地址
-				echo '<td class="t4">';
-				$pics = explode(',',$value);
-				foreach ($pics as $values) {
-				echo '<img src="'.LIVE_PIC.$values.'" style="max-width:30px; max-height:30px" />';
-				};
-				echo '</td>';
-				break;
-			case "startTime": //直播开始时间
-				echo '<td class="t5">'.date("Y-m-d H:i:s",substr($value,0,10)).'</td>';
-				break;
-			case "memberId": //成员ID
-				echo '<td class="t6">'.$value.'</td>';
-				break;
-			case "liveType": //直播类型
-				echo '<td class="t7">';
-				if ($value=="1") {
-					echo '视频';
-				}
-				else if ($value=="2") {
-					echo '电台';
-				}
-				else {
-					echo 'U_'.$value;
-				}
-				echo '</td>';
-				break;
-			case "picLoopTime": //图片循环时间
-				echo '<td class="t8">'.$value.'</td>';
-				break;
-			case "lrcPath": //弹幕文件地址
-				echo '<td class="t9"><a href="'.LIVE_PIC.$value.'"  target="_blank">'.LIVE_PIC.$value.'</a></td>';
-				break;
-			case "streamPath": //视频源地址
-				echo '<td class="t10"><a href="'.$value.'"  target="_blank">'.$value.'</a></td>';
-				break;
-			case "screenMode": //??
-				echo '<td class="t11">'.$value.'</td>';
-				break;
-			}
-		}
+//获取POST数据
+ $time0=$_POST["time0"];
+ $y=$_POST["y"];
+ $m=$_POST["m"];
+ $d=$_POST["d"];
+ $h=$_POST["h"];
+ $i=$_POST["i"];
+ $s=$_POST["s"];
+ $limit=$_POST["limit"];
+ $g=$_POST["g"];
+ $t=$_POST["t"];
+ $me=$_POST["me"];
+ 
+//预处理
+ if ($time0=="1") {
+ $time=strtotime($y.'-'.$m.'-'.$d.' '.$h.':'.$i.':'.$s)."000";
+ } else {
+ $time=0;
+ }
+
+//发送请求
+$get=live_get($limit,$time,$g,$t,$me);
+
+
+//打印表格
+live_print($get);
+
+} else {
+header('HTTP/1.1 400 Bad Request');
+echo "400 Bad Request";
 }
 
-//将直播、录播数据转换成可读数组(未完成，暂不需要)
-//未来考虑修改成 获取json数据=>转换调整顺序=>打印成表格 的流程
-//或者php仅用来获取数据，用javascript来处理json数据
-function live_trans ($result) {
-	$trans=array(
-	"livelist" => array(),
-	"reviewlist" => array(),
-	);
-	$data=json_decode($result,true);
-	foreach ($data["content"]["livelist"] as $key => $value) {
-	
-	}
-	foreach ($data["content"]["reviewlist"] as $key => $value) {
-	
-	}
+//测试用
+/*
+function dump($vars, $label = '', $return = false) {
+    if (ini_get('html_errors')) {
+        $content = "<pre>\n";
+        if ($label != '') {
+            $content .= "<strong>{$label} :</strong>\n";
+        }
+        $content .= htmlspecialchars(print_r($vars, true));
+        $content .= "\n</pre>\n";
+    } else {
+        $content = $label . " :\n" . print_r($vars, true);
+    }
+    if ($return) { return $content; }
+    echo $content;
+    return null;
 }
+dump(json_decode($get,true));
+*/
 ?>

@@ -1,0 +1,18 @@
+{
+    "server": "::",
+    "port_password": {
+        "8301": "abandon",
+        "8302": "ablility",
+        "8304": "aboard",
+		"8308": "abroad",
+		"8316": "absence",
+		"8332": "absent",
+		"8364": "absolute",
+		
+		"8501": "qwertyuiop",
+		"8502": "asdfghjkl",
+		
+		"8080": "qwertyuiop"
+    },
+    "method": "aes-256-cfb"
+}
