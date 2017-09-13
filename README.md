@@ -1,8 +1,8 @@
 # pocket48-grab
 口袋48直播&amp;录播web地址&amp;视频源获取
 
-# 测试地址
-https://xsaiting.com/pocket48/index.php
+# 测试地址(v0.1老版本)
+https://xsaiting.com/pocket48/v0.1 (v0.1老版本)
 
 # 说明
 1、此版本目前为alpha测试版本，仅实现了相关功能，希望能抛砖引玉，有更多的人一起完善它
