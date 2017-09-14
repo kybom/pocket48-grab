@@ -8,9 +8,9 @@
 	<!-- Bootstrap -->
 	<link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Bootstrap Material Design -->
-	<link href="css/bootstrap-material-design.css" rel="stylesheet">
-	<link href="css/ripples.min.css" rel="stylesheet">
-	<link href="css/snackbar.min.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/bootstrap-material-design/0.5.10/css/bootstrap-material-design.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/bootstrap-material-design/0.5.10/css/ripples.min.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/snackbarjs/1.0.0/snackbar.min.css" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="css/style.css" rel="stylesheet">
 	<style>
@@ -340,10 +340,10 @@ text-overflow:ellipsis;
 <!-- scripts begin -->
 <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<script src="js/ripples.min.js"></script>
-<script src="js/material.min.js"></script>
-<script src="js/snackbar.min.js"></script>
-<script src="js/jquery.nouislider.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-material-design/0.5.10/js/material.min.js"></script>
+<script src="https://cdn.bootcss.com/snackbarjs/1.0.0/snackbar.min.js"></script>
+<script src="https://cdn.bootcss.com/noUiSlider/6.2.0/jquery.nouislider.min.js"></script>
 <script>
 $("#btn").click(function(){
 	$.ajax({
@@ -364,7 +364,8 @@ $("#btn").click(function(){
 	}
 	})
 	});
-$("#simple").click(function(){	document.getElementById("simple").className="btn btn-raised btn-primary";
+$("#simple").click(function(){
+	document.getElementById("simple").className="btn btn-raised btn-primary";
 	document.getElementById("full").className="btn btn-primary";
 	var t = [1, 3, 4, 6, 10, 11];
 	$.each(t, function(index, value, array){
