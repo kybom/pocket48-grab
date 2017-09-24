@@ -3,9 +3,20 @@
 
 //测试用
 
-ini_set('display_errors',1);            //错误信息  
-ini_set('display_startup_errors',1);    //php启动错误信息
-
+//ini_set('display_errors',1);            //错误信息  
+//ini_set('display_startup_errors',1);    //php启动错误信息
+//初始化
+ $time0="";
+ $y="";
+ $m="";
+ $d="";
+ $h="";
+ $i="";
+ $s="";
+ $limit="";
+ $g="";
+ $me="";
+ $t="";
 
 require_once ('functions.php');
 function empty_0 ($i) {
@@ -15,7 +26,7 @@ function empty_0 ($i) {
 		return 0;
 	}
 }
-if(!(empty_0($_POST["time0"])||empty_0($_POST["y"])||empty_0($_POST["m"])||empty_0($_POST["d"])||empty_0($_POST["h"])||empty_0($_POST["i"])||empty_0($_POST["s"])||empty_0($_POST["limit"])||empty_0($_POST["g"])||empty_0($_POST["t"])||empty_0($_POST["me"])))
+if(!(empty_0($_POST["limit"])||empty_0($_POST["time0"])))
 //检查变量是否非空
 {
 //获取POST数据
@@ -28,8 +39,8 @@ if(!(empty_0($_POST["time0"])||empty_0($_POST["y"])||empty_0($_POST["m"])||empty
  $s=$_POST["s"];
  $limit=$_POST["limit"];
  $g=$_POST["g"];
- $t=$_POST["t"];
  $me=$_POST["me"];
+ $t=$_POST["t"];
  
 //预处理
  if ($time0=="1") {
@@ -39,7 +50,7 @@ if(!(empty_0($_POST["time0"])||empty_0($_POST["y"])||empty_0($_POST["m"])||empty
  }
 
 //发送请求
-$get=live_get($limit,$time,$g,$t,$me);
+$get=live_get($limit,$time,$g,$me,$t);
 
 
 //打印表格
