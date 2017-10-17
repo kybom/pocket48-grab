@@ -1,11 +1,11 @@
-# pocket48-grab v1.0
+# pocket48-grab v1.1
 口袋48直播&amp;录播web地址&amp;视频源获取
 
 # 测试地址
 https://xsaiting.com/pocket48/
 
 # 说明
-说明：1、第一个正式版本，可以选择队伍/成员，还希望有更多人一起完善这个程序。
+说明：1、修复了获取不到直播信息的BUG。如果遇到问题直接邮件联系我：xsaiting@qq.com
 
 2、直播源推荐使用VLC media player【[下载](http://www.videolan.org/)】播放，该播放器可播放m3u8文件。
 
