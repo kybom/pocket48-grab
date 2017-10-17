@@ -54,7 +54,7 @@ curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-	'os: android ',
+	'os: android',
 	'version: 5.0.1',
 	'Content-Type: application/json',
 	'Content-Length: ' . strlen($data_string))
