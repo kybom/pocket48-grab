@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>口袋48直播获取v1.1</title>
+	<title>口袋48直播获取v1.2</title>
 	
 	<!-- Css begin -->
 	<!-- Bootstrap -->
@@ -38,7 +38,7 @@ text-overflow:ellipsis;
 		<div class="page-header">
 		<div class="col-md-7">
 				<h1>
-					口袋48直播获取v1.1
+					口袋48直播获取v1.2
 				</h1>
 				<h1>
 					<small>作者 @小赛艇 | xsaiting@qq.com | GitHub地址:<a href="https://github.com/xsaiting/pocket48-grab/" target="_blank">pocket48-grab</a></small>
@@ -46,7 +46,7 @@ text-overflow:ellipsis;
 		</div>
 		<div class="col-md-5 well">
 			<p>
-				说明：1、修复了获取不到直播信息的BUG。如果遇到问题直接邮件联系我：xsaiting@qq.com
+				说明：1、更新了成员信息(20171105)。如果使用遇到问题直接邮件联系我：xsaiting@qq.com
 			</p>
 			<p>
 				2、直播源推荐使用VLC media player[<a href="http://www.videolan.org/" target="_blank">下载</a>]播放，该播放器可播放m3u8文件。
@@ -75,7 +75,6 @@ text-overflow:ellipsis;
 					<button type="button" id="long" class="btn btn-warning">展开表格</button>
 				</fieldset>
 				<div id="more-setting" style="display:none;">
-				<label>【<input checked="checked" name="g" type="radio" value="0" id="all-group" />全团】</label>
 				<fieldset id="groupset">
 				</fieldset>
 				<label>【<input checked="checked" name="me" type="radio" value="0" id="all-member" />所有成员】</label>
@@ -173,43 +172,18 @@ $("#more1").click(function(){
 	} else {
 	$("#more-setting").hide();
 	$("#more1").attr("class","btn btn-primary");
+	$(".team").hide();
 	$("input[name='g']:checked").attr("checked",false);
 	$("input[name='me']:checked").attr("checked",false);
-	$("#all-group").attr("checked",true);
-	$("#all-member").attr("checked",true);
-	$("#官方").hide();
-	$("#SNH48").hide();
-	$("#BEJ48").hide();
-	$("#GNZ48").hide();
-	$("#SHY48").hide();
+	$("input[name='g'][value='0']").attr("checked",true);
+	$("input[name='me'][value='0']").attr("checked",true);
+	
 	}
 	});
 $(document).on("click","input[name='g']",function(){
-	$("#官方").hide();
-	$("#SNH48").hide();
-	$("#BEJ48").hide();
-	$("#GNZ48").hide();
-	$("#SHY48").hide();
+	$(".team").hide();
 	i = $("input[name='g']:checked").val();
-	switch (i){
-	case "0":
-	$("#官方").show();
-	break;
-	case "10":
-	$("#SNH48").show();
-	break;
-	case "11":
-	$("#BEJ48").show();
-	break;
-	case "12":
-	$("#GNZ48").show();
-	break;
-	case "13":
-	$("#SHY48").show();
-	break;
-	default:
-	alert(i);
-	}
+	$(".group-"+i).show();
 });
 $(document).ready(function() {
 $.ajax({
