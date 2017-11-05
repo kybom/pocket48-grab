@@ -3,6 +3,8 @@
 
 //api地址
 define("LIVE_API", "https://plive.48.cn/livesystem/api/live/v1/memberLivePage");
+define("OPENLIVE_API", "https://plive.48.cn/livesystem/api/live/v1/openLivePage");
+define("LIVEINFO_API", "https://plive.48.cn/livesystem/api/live/v1/getLiveOne");
 
 //直播分享地址前缀
 define("LIVE_SHARE", "https://h5.48.cn/2017appshare/memberLiveShare/index.html?id=");
@@ -23,6 +25,16 @@ $order=array(
 	"lrcPath",
 	"picLoopTime",
 	"screenMode",
+);
+$order_open=array(
+	"title",
+	"subTitle",
+	"isReview",
+	"startTime",
+	"picPath",
+	"streamPathHd",
+	"streamPathLd",
+	"streamPath"
 );
 
 //获取直播、录播json数据
@@ -51,6 +63,100 @@ $result = curl_exec($ch);
 return $result;
 }
 
+//获取公演直播、录播json数据
+/* {
+   $ "isReview": 0,
+   $ "groupId": 0,
+   ** "userId": 0,
+   ** "lastGroupId": 0,
+   $"lastTime": 0,
+   ** "type": 0,
+   ** "giftUpdTime": 1498211389003,
+   $ "limit": 20
+} */
+function openlive_get ($limit='100',$lasttime='0',$groupId='0',$isreview='1',$api=OPENLIVE_API,$giftUpdTime='1498211389003')
+{
+$data = array(
+	"isReview" => $isreview,	//是否为录播
+	"lastTime" => $lasttime,	//从此刻起获取之前的直播，毫秒时间戳
+	"groupId" => $groupId,	//xxx48组
+	"giftUpdTime" => $giftUpdTime,	//礼物更新时间，毫秒时间戳
+	"limit" => $limit	//最多多少条
+	);                              
+$data_string = json_encode($data);
+$ch = curl_init($api);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(      
+    'os: android ',
+    'version: 5.0.1',   
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($data_string)) 
+);
+$result = curl_exec($ch);
+return $result;
+}
+
+//live详情
+function openlive_get_info ($content,$f,$api=LIVEINFO_API) {
+//从api获取
+/* $data = array(
+//{"type":0,"userId":0,"liveId":"59ef0c440cf22d4b3516e64b"}
+	"liveId" => $content["liveId"],	//liveId
+	);                              
+$data_string = json_encode($data);
+$ch = curl_init($api);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(      
+    'os: android ',
+    'version: 5.0.1',   
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($data_string)) 
+);
+$result = curl_exec($ch);
+return $result;
+*/
+
+//手动解析(提高速度) beta
+/* 	"title",
+	"subTitle",
+	"isReview"
+	"startTime",
+	"picPath",
+	"streamPathHd",
+	"streamPathLd",
+	"streamPath" */
+$info=[];
+$groupid2live=[
+10=>9999,
+11=>2001,
+12=>3001,
+13=>6001,
+14=>8001,
+];
+$info["title"]=$content["title"];
+$info["subTitle"]=$content["subTitle"];
+if ($f==1) {
+	$info["isReview"]=1;
+	$i=$groupid2live[$content["groupId"]]."/".date("Ymd",substr($content["startTime"],0,10))."/".$content["liveId"].".mp4/playlist.m3u8";
+	$info["streamPathHd"]="http://ts.snh48.com/vod/z1.chaoqing.".$i;
+	$info["streamPathLd"]="http://ts.snh48.com/vod/z1.gaoqing.".$i;
+	$info["streamPath"]="http://ts.snh48.com/vod/z1.liuchang.".$i;
+} elseif ($f==2) {
+	if($content["isOpen"]) {$info["isReview"]=2;} else {$info["isReview"]=0;}
+	$i=$groupid2live[$content["groupId"]]."/playlist.m3u8";
+	$info["streamPathHd"]="http://hlthls.48.cn/chaoqing/".$i;
+	$info["streamPathLd"]="http://hlthls.48.cn/gaoqing/".$i;
+	$info["streamPath"]="http://hlthls.48.cn/liuchang/".$i;
+}
+$info["startTime"]=$content["startTime"];
+$info["picPath"]=$content["picPath"];
+return $info;
+}
+
 //解析数据未来可以考虑在浏览器js完成
 
 //解析数据
@@ -74,8 +180,72 @@ function live_print ($result) {
 	}
 }
 
-//辅助函数 将直播、录播数据提取的内容打印成一列
+function openlive_print ($result,$f) {
+	$data=json_decode($result,true);
+	if(!empty($data["content"]["liveList"])) {
+	echo '<tr><td colspan="8"><span style="color:Red">----------分界线，以下为公演----------</span></td></tr>';	
+	foreach ($data["content"]["liveList"] as $id => $content) {
+		$info=openlive_get_info($content,$f);
+		
+		//$info=json_decode($info,true);
+		echo '<tr>';
+		tablelist_open($info);
+		echo '</tr>';
+	}
+	}
+}
+//辅助函数 将公演直播、录播数据提取的内容打印成一列
+function tablelist_open($content) {
+	global $order_open;
+	foreach ($order_open as $key) {
+		$value=$content[$key];
+		switch ($key) {
+			case "streamPathHd": //07超清源
+				echo '<td class="t7"><a href="'.$value.'"  target="_blank">'.$value.'</a></td>';
+				break;
+			case "title": //02标题
+				echo '<td class="t2">'.$value.'</td>';
+				break;
+			case "subTitle": //03副标题
+				echo '<td class="t3">'.$value.'</td>';
+				break;
+			case "picPath": //06配图地址
+				echo '<td class="t6">';
+				$pics = explode(',',$value);
+				foreach ($pics as $values) {
+				echo '<img src="'.LIVE_PIC.$values.'" style="max-width:30px; max-height:30px" />';
+				};
+				echo '</td>';
+				break;
+			case "startTime": //05直播开始时间
+				echo '<td class="t5">'.date("Y-m-d",substr($value,0,10)).'<br />'.date("H:i:s",substr($value,0,10)).'</td>';
+				break;
+			case "isReview": //04直播类型
+				echo '<td class="t4">';
+				if ($value==1) {
+					echo '录播';
+				}
+				else if ($value==0) {
+					echo '直播';
+				}
+				else if ($value==2) {
+					echo '正在直播';
+				} else {
+					echo 'U_'.$value;
+				}
+				echo '</td>';
+				break;
+			case "streamPath": //09标清源
+				echo '<td class="t9"><a href="'.$value.'"  target="_blank">'.$value.'</a></td>';
+				break;
+			case "streamPathLd": //08高清源
+				echo '<td class="t8"><a href="'.$value.'"  target="_blank">'.$value.'</a></td>';
+				break;
+		}
+	}
+}
 
+//辅助函数 将直播、录播数据提取的内容打印成一列
 function tablelist($content) {
 	global $order;
 	foreach ($order as $key) {

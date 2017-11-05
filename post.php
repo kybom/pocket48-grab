@@ -26,7 +26,7 @@ function empty_0 ($i) {
 		return 0;
 	}
 }
-if(!(empty_0($_POST["limit"])||empty_0($_POST["time0"])))
+if(!(empty_0($_POST["limit"])||empty_0($_POST["time0"])||empty_0($_GET["f"])))
 //检查变量是否非空
 {
 //获取POST数据
@@ -49,12 +49,21 @@ if(!(empty_0($_POST["limit"])||empty_0($_POST["time0"])))
  $time=0;
  }
 
-//发送请求
+
+//发送请求、打印表格
+$f=$_GET["f"];
+if ($f==0) {
 $get=live_get($limit,$time,$g,$me,$t);
-
-
-//打印表格
 live_print($get);
+} elseif ($f==1) {
+$get=openlive_get($limit,$time,$g,1);
+openlive_print($get,$f);
+} elseif ($f==2) {
+$get=openlive_get($limit,$time,$g,0);
+openlive_print($get,$f);
+}
+
+
 
 } else {
 header('HTTP/1.1 400 Bad Request');
