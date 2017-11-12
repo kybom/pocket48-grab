@@ -99,62 +99,56 @@ return $result;
 }
 
 //live详情
-function openlive_get_info ($content,$f,$api=LIVEINFO_API) {
-//从api获取
-/* $data = array(
-//{"type":0,"userId":0,"liveId":"59ef0c440cf22d4b3516e64b"}
-	"liveId" => $content["liveId"],	//liveId
-	);                              
-$data_string = json_encode($data);
-$ch = curl_init($api);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(      
-    'os: android ',
-    'version: 5.0.1',   
-    'Content-Type: application/json',
-    'Content-Length: ' . strlen($data_string)) 
-);
-$result = curl_exec($ch);
-return $result;
-*/
-
-//手动解析(提高速度) beta
-/* 	"title",
-	"subTitle",
-	"isReview"
-	"startTime",
-	"picPath",
-	"streamPathHd",
-	"streamPathLd",
-	"streamPath" */
-$info=[];
-$groupid2live=[
-10=>9999,
-11=>2001,
-12=>3001,
-13=>6001,
-14=>8001,
-];
-$info["title"]=$content["title"];
-$info["subTitle"]=$content["subTitle"];
-if ($f==1) {
-	$info["isReview"]=1;
-	$i=$groupid2live[$content["groupId"]]."/".date("Ymd",substr($content["startTime"],0,10))."/".$content["liveId"].".mp4/playlist.m3u8";
-	$info["streamPathHd"]="http://ts.snh48.com/vod/z1.chaoqing.".$i;
-	$info["streamPathLd"]="http://ts.snh48.com/vod/z1.gaoqing.".$i;
-	$info["streamPath"]="http://ts.snh48.com/vod/z1.liuchang.".$i;
-} elseif ($f==2) {
-	if($content["isOpen"]) {$info["isReview"]=2;} else {$info["isReview"]=0;}
-	$i=$groupid2live[$content["groupId"]]."/playlist.m3u8";
-	$info["streamPathHd"]="http://hlthls.48.cn/chaoqing/".$i;
-	$info["streamPathLd"]="http://hlthls.48.cn/gaoqing/".$i;
-	$info["streamPath"]="http://hlthls.48.cn/liuchang/".$i;
-}
-$info["startTime"]=$content["startTime"];
-$info["picPath"]=$content["picPath"];
-return $info;
+function openlive_get_info ($contents,$f=0,$api=LIVEINFO_API) {
+	//从api获取
+	$i=0;
+	$mh=curl_multi_init();
+	$ch=[];
+	//设置curl请求参数
+	foreach ($contents as $content) {
+		$request = array(
+		//{"type":0,"userId":0,"liveId":"59ef0c440cf22d4b3516e64b"}
+			"liveId" => $content["liveId"],	//liveId
+		);
+		$data_string = json_encode($request);
+		$ch[$i] = curl_init($api);
+		curl_setopt($ch[$i], CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch[$i], CURLOPT_POSTFIELDS, $data_string);
+		curl_setopt($ch[$i], CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch[$i], CURLOPT_HTTPHEADER, array(      
+			'os: android ',
+			'version: 5.0.1',
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($data_string)) 
+		);
+		curl_multi_add_handle($mh,$ch[$i]);
+		$i++;
+	}
+	
+	//发起多线程curl请求
+	$active = null;
+	do {
+		$mrc = curl_multi_exec($mh, $active);
+	} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+	while ($active && $mrc == CURLM_OK) {
+		if (curl_multi_select($mh) != -1) {
+			do {
+				$mrc = curl_multi_exec($mh, $active);
+			} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+		}
+	}
+	
+	//返回结果
+	$results=[];
+	foreach ($ch as $value)
+	{
+	$result = curl_multi_getcontent($value);
+	$result = json_decode($result,true);
+	$results[] = $result["content"];
+	curl_multi_remove_handle($mh, $value);  
+	}
+	curl_multi_close($mh);
+	return $results;
 }
 
 //解析数据未来可以考虑在浏览器js完成
@@ -183,17 +177,17 @@ function live_print ($result) {
 function openlive_print ($result,$f) {
 	$data=json_decode($result,true);
 	if(!empty($data["content"]["liveList"])) {
-	echo '<tr><td colspan="8"><span style="color:Red">----------分界线，以下为公演----------</span></td></tr>';	
-	foreach ($data["content"]["liveList"] as $id => $content) {
-		$info=openlive_get_info($content,$f);
-		
-		//$info=json_decode($info,true);
+	echo '<tr><td colspan="8"><span style="color:Red">----------分界线，以下为公演----------</span></td></tr>';
+	$results=openlive_get_info($data["content"]["liveList"]);
+	foreach ($results as $content) {
+		//$info=json_decode($content,true);
 		echo '<tr>';
-		tablelist_open($info);
+		tablelist_open($content);
 		echo '</tr>';
 	}
 	}
 }
+
 //辅助函数 将公演直播、录播数据提取的内容打印成一列
 function tablelist_open($content) {
 	global $order_open;

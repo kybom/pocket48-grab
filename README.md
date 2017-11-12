@@ -5,7 +5,7 @@
 https://xsaiting.com/pocket48/
 
 # 说明
-1、加入了获取公演录播/直播的功能。如果使用遇到问题直接邮件联系我：xsaiting@qq.com
+1、修复了了获取公演录播/直播的功能。如果使用遇到问题直接邮件联系我：xsaiting@qq.com
 
 2、直播源推荐使用VLC media player【[下载](http://www.videolan.org/)】播放，该播放器可播放m3u8文件。
 
